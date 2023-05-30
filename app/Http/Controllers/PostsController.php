@@ -34,6 +34,37 @@ class PostsController extends Controller
             ]);
         }
     }
+    public function search(Request $request)
+    {
+        try {
+            $keys = $request->keys;
+            $words = '%' . implode('%', $keys) . '%';
+            $posts = Posts::where(function ($query) use ($words) {
+                $query->where('title', 'like', '%' . $words . '%')
+                    ->orWhere('content', 'like', '%' . $words . '%');
+            })->get();
+            foreach ($posts as $post) {
+                $user = User::where('email', $post->author)->first();
+                $post->email = $user->email;
+                $post->author = $user->firstname . ' ' . $user->lastname;
+                $fileContents = Storage::get($user->photo);
+                $fileContents = base64_encode($fileContents);
+                $post->photo = $fileContents;
+            }
+            $sortedposts =
+                collect($posts)->sortBy('created_at')->values()->all();
+            return response()->json([
+                'status' => 200,
+                'posts' => $sortedposts,
+            ]);
+        } catch (Exception $e) {
+            Log::critical(($e));
+            return response()->json([
+                'status' => 404,
+                'message' => "error 404",
+            ]);
+        }
+    }
     public function update(Request $request)
     {
         try {

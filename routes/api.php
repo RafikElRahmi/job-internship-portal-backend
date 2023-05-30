@@ -41,6 +41,7 @@ Route::post('/upgradesociety', [PostulationsController::class, 'store']);
 Route::post('/checkupgrade', [PostulationsController::class, 'check']);
 Route::post('/getadminpostulations', [PostulationsController::class, 'getall']);
 Route::post('/editsocietypostulation', [PostulationsController::class, 'editstate']);
+Route::post('/search', [PostsController::class, 'search']);
 Route::post('/addpost', [PostsController::class, 'create']);
 Route::post('/modifypost', [PostsController::class, 'update']);
 Route::post('/deletepost', [PostsController::class, 'delete']);
